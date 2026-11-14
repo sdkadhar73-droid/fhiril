@@ -1,0 +1,105 @@
+.env
+.env.*
+!.env.example
+**/bin/
+**/obj/
+.dotnet-cli/
+*.user
+*.suo
+
+# Build folders
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Rider
+.idea/
+
+# Publish output
+publish/
+out/
+
+# Logs
+logs/
+*.log
+
+# NuGet
+packages/
+*.nupkg
+
+# Local configuration
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# Entity Framework
+*.mdf
+*.ldf
+
+# Test Results
+TestResults/
+
+# Coverage
+coverage/
+coverage-results/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Mac
+.DS_Store
+
+# Node modules (if frontend exists)
+node_modules/
+
+# npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.*
+
+# Docker overrides
+docker-compose.override.yml
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# Azure
+.localhistory/
+
+# Generated files
+Generated/
+
+
+# GitHub Copilot
+.copilot/
+copilot/
+*.copilot
+
+# Visual Studio temporary files
+.vs/
+
+# VS Code
+.vscode/
+
+# Build outputs
+bin/
+obj/
+
+.vs/
+bin/
+obj/

@@ -1,0 +1,83 @@
+services:
+  ecrnow-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${ECRNOW_DB_NAME:?Set ECRNOW_DB_NAME in .env}
+      POSTGRES_USER: ${ECRNOW_DB_USER:?Set ECRNOW_DB_USER in .env}
+      POSTGRES_PASSWORD: ${ECRNOW_DB_PASSWORD:?Set ECRNOW_DB_PASSWORD in .env}
+    volumes:
+      - ecrnow-postgres-data:/var/lib/postgresql/data
+    networks:
+      - ecrnow-backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  ecrnow-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        ecrnow-source: ${ECRNOW_SOURCE_DIR:-../onix/eCRNow/eCRNow}
+    depends_on:
+      ecrnow-db:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: "8080"
+      JDBC_DRIVERCLASSNAME: org.postgresql.Driver
+      JDBC_URL: jdbc:postgresql://ecrnow-db:5432/${ECRNOW_DB_NAME:?Set ECRNOW_DB_NAME in .env}
+      JDBC_USERNAME: ${ECRNOW_DB_USER:?Set ECRNOW_DB_USER in .env}
+      JDBC_PASSWORD: ${ECRNOW_DB_PASSWORD:?Set ECRNOW_DB_PASSWORD in .env}
+      SECURITY_KEY: ${ECRNOW_SECURITY_KEY:?Set ECRNOW_SECURITY_KEY in .env}
+      LOGGING_FILE_NAME: /dev/null
+      ERSD_FILE_LOCATION: "/config/kars/eRSDv2_specification_bundle 12_12_2022.json"
+      SCHEMATRON_FILE_LOCATION: /config/schematron/CDAR2_IG_PHCASERPT_R2_STU1.1_SCHEMATRON.sch
+      XSD_SCHEMAS_LOCATION: /config/schemas/CDA_SDTC.xsd
+      KAR_DIRECTORY: /config/kars
+      BSA_OUTPUT_DIRECTORY: /var/ecrnow/bsa-output
+      CUSTOM_QUERY_DIRECTORY: /config/custom-queries
+    volumes:
+      - type: bind
+        source: ${ECRNOW_KARS_DIR:?Set ECRNOW_KARS_DIR in .env}
+        target: /config/kars
+        read_only: true
+      - type: bind
+        source: ${ECRNOW_ARTIFACTS_DIR:?Set ECRNOW_ARTIFACTS_DIR in .env}/CDAR2_IG_PHCASERPT_R2_STU1.1_SCHEMATRON.sch
+        target: /config/schematron/CDAR2_IG_PHCASERPT_R2_STU1.1_SCHEMATRON.sch
+        read_only: true
+      - type: bind
+        source: ${ECRNOW_XSD_FILE:?Set ECRNOW_XSD_FILE in .env}
+        target: /config/schemas/CDA_SDTC.xsd
+        read_only: true
+      - type: bind
+        source: ${ECRNOW_QUERY_DIR:?Set ECRNOW_QUERY_DIR in .env}
+        target: /config/custom-queries
+        read_only: true
+      - type: volume
+        source: ecrnow-bsa-output
+        target: /var/ecrnow/bsa-output
+    ports:
+      - "127.0.0.1:${ECRNOW_HOST_PORT:-8081}:8080"
+    networks:
+      - ecrnow-backend
+      - hapi-application
+    restart: unless-stopped
+
+volumes:
+  ecrnow-postgres-data:
+    name: fhiril-ecrnow-postgres-data
+  ecrnow-bsa-output:
+    name: fhiril-ecrnow-bsa-output
+
+networks:
+  ecrnow-backend:
+    name: fhiril-ecrnow-backend
+    driver: bridge
+    internal: true
+  hapi-application:
+    name: fhiril-ecrnow-hapi
+    external: true

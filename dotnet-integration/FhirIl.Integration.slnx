@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="FhirIl.Api/FhirIl.Api.csproj" />
+  <Project Path="FhirIl.IntegrationTests/FhirIl.IntegrationTests.csproj" />
+  <Project Path="FhirIl.UnitTests/FhirIl.UnitTests.csproj" />
+</Solution>

@@ -1,0 +1,31 @@
+@FhirIl.Api_HostAddress = http://127.0.0.1:5080
+
+GET {{FhirIl.Api_HostAddress}}/api/health/fhir
+Accept: application/json
+
+###
+
+GET {{FhirIl.Api_HostAddress}}/api/fhir/capabilities
+Accept: application/json
+
+###
+
+GET {{FhirIl.Api_HostAddress}}/api/fhir/patients/1
+Accept: application/fhir+json
+
+###
+
+GET {{FhirIl.Api_HostAddress}}/api/fhir/patients?count=5
+Accept: application/fhir+json
+
+###
+
+GET {{FhirIl.Api_HostAddress}}/api/fhir/encounters?count=5
+Accept: application/fhir+json
+
+###
+
+GET {{FhirIl.Api_HostAddress}}/api/fhir/observations?count=5
+Accept: application/fhir+json
+
+###
